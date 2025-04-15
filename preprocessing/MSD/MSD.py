@@ -9,7 +9,8 @@ def retrieve_artist_trackID(path):
     con = sqlite3.connect(path)
     cur = con.cursor()
     df = pd.read_sql_query('SELECT artist_name,track_id FROM songs', con)
-    df['artist_name'] = df['artist_name'].str.lower()
+    df['artist_name'] = df['artist_name'].str.lower() #turn all artist names to lowercase
+    df['artist_name'] = df['artist_name'].str.strip() #get rid of punctuation
     df.to_csv('MSD_artists_trackIDS.csv', index=False)
 
 def retrieve_unique_artists(path):
@@ -17,13 +18,24 @@ def retrieve_unique_artists(path):
     cur = con.cursor()
     df = pd.read_sql_query('SELECT artist_name FROM songs', con)
     df.drop_duplicates(inplace= True)
-    df['artist_name'] = df['artist_name'].str.lower()
+    df['artist_name'] = df['artist_name'].str.lower() #turn all artist names to lowercase
+    df['artist_name'] = df['artist_name'].str.strip() #get rid of punctuation
     df.to_csv('MSD_artists_unique.csv', index=False)
 
-def reconstruct_lyrics(path):
+def reconstruct_lyrics(artists, lyrics):
+    pass
+
+def artist_intersection(msd, fma):
     pass
             
 if __name__ == "__main__":
-    path = './track_metadata.db'
-    # retrieve_unique_artists(path)
-    retrieve_artist_trackID(path)
+
+    #path variables
+    PATH_METADATA = './track_metadata.db'
+    PATH_LYRICS = './mxm_dataset.db'
+    PATH_FMA = '../FMA/FMA_artists.csv'
+    PATH_MSD = './MSD_artists_unique.csv'
+    PATH_MSD_TRACKS = './MSD_artists_trackIDS.csv'
+
+    retrieve_unique_artists(PATH_METADATA)
+    retrieve_artist_trackID(PATH_METADATA)
