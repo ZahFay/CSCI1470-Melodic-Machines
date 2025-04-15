@@ -1,11 +1,16 @@
-# https://github.com/tbertinmahieux/MSongsDB/blob/master/Tasks_Demos/NamesAnalysis/list_all_artists.py
 
-import hdf5_utils
-import hdf5_getters as GETTERS
+# https://carpentry.library.ucsb.edu/2021-08-23-ucsb-python-online/09-working-with-sql/index.html
+
+import csv
+import sqlite3
+import pandas as pd
 
 def retrieve_artist(path):
-    h5 = hdf5_utils.open_h5_file_read(path)
-    name = GETTERS.get_artist_name(h5)
-
-def list_all(path):
-    pass
+    con = sqlite3.connect(path)
+    cur = con.cursor()
+    df = pd.read_sql_query('SELECT artist_name,track_id FROM songs', con)
+    df.to_csv('MSD_artists_trackIDS.csv', index=False)
+            
+if __name__ == "__main__":
+    path = './track_metadata.db'
+    retrieve_artist(path)
