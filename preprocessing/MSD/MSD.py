@@ -17,6 +17,9 @@ def retrieve_unique_artists(path):
     df = pd.read_sql_query('SELECT artist_name FROM songs', con)
     df.drop_duplicates(inplace= True)
     df.to_csv('MSD_artists_unique.csv', index=False)
+
+def reconstruct_lyrics(path):
+    pass
             
 if __name__ == "__main__":
     path = './track_metadata.db'
