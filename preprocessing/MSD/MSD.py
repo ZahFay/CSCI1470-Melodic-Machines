@@ -9,6 +9,7 @@ def retrieve_artist_trackID(path):
     con = sqlite3.connect(path)
     cur = con.cursor()
     df = pd.read_sql_query('SELECT artist_name,track_id FROM songs', con)
+    df['artist_name'] = df['artist_name'].str.lower()
     df.to_csv('MSD_artists_trackIDS.csv', index=False)
 
 def retrieve_unique_artists(path):
@@ -16,6 +17,7 @@ def retrieve_unique_artists(path):
     cur = con.cursor()
     df = pd.read_sql_query('SELECT artist_name FROM songs', con)
     df.drop_duplicates(inplace= True)
+    df['artist_name'] = df['artist_name'].str.lower()
     df.to_csv('MSD_artists_unique.csv', index=False)
 
 def reconstruct_lyrics(path):
@@ -23,4 +25,5 @@ def reconstruct_lyrics(path):
             
 if __name__ == "__main__":
     path = './track_metadata.db'
-    retrieve_unique_artists(path)
+    # retrieve_unique_artists(path)
+    retrieve_artist_trackID(path)
