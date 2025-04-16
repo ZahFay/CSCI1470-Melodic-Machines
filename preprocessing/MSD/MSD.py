@@ -9,19 +9,15 @@ from os.path import isfile, join
 
 def retrieve_artist_trackID(path):
     con = sqlite3.connect(path)
-    cur = con.cursor()
     df = pd.read_sql_query('SELECT artist_name,track_id FROM songs', con)
-    df['artist_name'] = df['artist_name'].str.lower() #turn all artist names to lowercase
-    df['artist_name'] = df['artist_name'].str.strip() #get rid of punctuation
+    df['artist_name'] = df['artist_name'].str.lower().str.strip() #turn all artist names to lowercase and get rid of punctuation
     df.to_csv('MSD_artists_trackIDS.csv', index=False)
 
 def retrieve_unique_artists(path):
     con = sqlite3.connect(path)
-    cur = con.cursor()
     df = pd.read_sql_query('SELECT artist_name FROM songs', con)
     df.drop_duplicates(inplace= True)
-    df['artist_name'] = df['artist_name'].str.lower() #turn all artist names to lowercase
-    df['artist_name'] = df['artist_name'].str.strip() #get rid of punctuation
+    df['artist_name'] = df['artist_name'].str.lower().str.strip() 
     df.to_csv('MSD_artists_unique.csv', index=False)
 
 def reconstruct_lyrics(artists, lyrics):
