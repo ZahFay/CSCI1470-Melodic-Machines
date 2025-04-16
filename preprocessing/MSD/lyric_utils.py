@@ -6,6 +6,7 @@ import sqlite3
 import pandas as pd
 from os import listdir
 from os.path import isfile, join
+import lyricsgenius
 
 def retrieve_artist_trackID(path):
     con = sqlite3.connect(path)
@@ -20,8 +21,10 @@ def retrieve_unique_artists(path):
     df['artist_name'] = df['artist_name'].str.lower().str.strip() 
     df.to_csv('MSD_artists_unique.csv', index=False)
 
-def reconstruct_lyrics(artists, lyrics):
-    pass
+def reconstruct_lyrics():
+    genius = lyricsgenius.Genius("2ZvGLdJrJsZyhm1EU_35tcCHz89eyp4TfBRyybo9JIqUDTR71nH6jXs9DtQdB-D2")
+    song = genius.search_song("taxi", "the maine") #Song, Artist Pair
+    print(song.lyrics)
 
 def artist_intersection(msd, fma):
     msd_df = pd.read_csv(msd)
@@ -57,4 +60,5 @@ if __name__ == "__main__":
     # retrieve_unique_artists(PATH_METADATA)
     # retrieve_artist_trackID(PATH_METADATA)
     # artist_intersection(PATH_MSD, PATH_FMA)
-    merge_famous_artists(PATH_FAMOUS_LYRICS)
+    # merge_famous_artists(PATH_FAMOUS_LYRICS)
+    reconstruct_lyrics()
