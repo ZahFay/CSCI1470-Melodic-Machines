@@ -26,7 +26,13 @@ def reconstruct_lyrics(artists, lyrics):
     pass
 
 def artist_intersection(msd, fma):
-    pass
+    msd_df = pd.read_csv(msd)
+    msd_df.rename(columns={'artist_name': 'name'}, inplace=True) #rename column to merge
+    fma_df = pd.read_csv(fma)
+    df_merged = pd.concat([msd_df, fma_df], ignore_index=True)
+    duplicates = df_merged[df_merged.duplicated()]
+    duplicates.to_csv('MSD_FMA_artists.csv', index=False)
+
             
 if __name__ == "__main__":
 
@@ -37,5 +43,6 @@ if __name__ == "__main__":
     PATH_MSD = './MSD_artists_unique.csv'
     PATH_MSD_TRACKS = './MSD_artists_trackIDS.csv'
 
-    retrieve_unique_artists(PATH_METADATA)
-    retrieve_artist_trackID(PATH_METADATA)
+    # retrieve_unique_artists(PATH_METADATA)
+    # retrieve_artist_trackID(PATH_METADATA)
+    artist_intersection(PATH_MSD, PATH_FMA)
