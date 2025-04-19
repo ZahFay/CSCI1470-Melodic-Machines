@@ -21,10 +21,33 @@ def retrieve_unique_artists(path):
     df['artist_name'] = df['artist_name'].str.lower().str.strip() 
     df.to_csv('MSD_artists_unique.csv', index=False)
 
-def reconstruct_lyrics():
+def retrieve_artist_lyrics(path):
     genius = lyricsgenius.Genius("2ZvGLdJrJsZyhm1EU_35tcCHz89eyp4TfBRyybo9JIqUDTR71nH6jXs9DtQdB-D2")
-    song = genius.search_song("taxi", "the maine") #Song, Artist Pair
-    print(song.lyrics)
+    artist_lyrics = pd.DataFrame(columns=['artist','lyric'])
+    no_lyrics = pd.DataFrame(columns=['artist', 'song'])
+
+    df = pd.read_csv(path, index_col=0)
+    num_rows = len(df)
+    for row in range(num_rows):
+        row = df.iloc[row].str.lower().str.strip() 
+        track = row['track title']
+        artist = row['artist name']
+        
+        song = genius.search_song(track, artist) #Song, Artist Pair
+        if(song == None):
+            new_row = pd.DataFrame([{'artist':artist, 'song':track}])
+            no_lyrics = pd.concat([no_lyrics, new_row], ignore_index=True)
+
+        else:
+            new_row = pd.DataFrame([{'artist':artist, 'lyric': song.lyrics}])
+            artist_lyrics = pd.concat([artist_lyrics, new_row], ignore_index=True)
+
+    artist_lyrics['lyric'] = artist_lyrics['lyric'].str.lower().str.strip() 
+    artist_lyrics.to_csv('artist_lyrics.csv', index=False)
+    no_lyrics.to_csv('artist_no_lyrics.csv', index=False)
+    print("there are ", len(no_lyrics), " songs that don't have lyrics")
+    print("there are ", len(artist_lyrics), " songs that have lyrics")
+ 
 
 def artist_intersection(msd, fma):
     msd_df = pd.read_csv(msd)
@@ -51,14 +74,13 @@ def merge_famous_artists(path):
 if __name__ == "__main__":
     #path variables
     PATH_METADATA = './track_metadata.db'
-    PATH_LYRICS = './mxm_dataset.db'
     PATH_FMA = '../FMA/FMA_artists.csv'
     PATH_MSD = './MSD_artists_unique.csv'
-    PATH_MSD_TRACKS = './MSD_artists_trackIDS.csv'
+    PATH_FMA_METADATA = '../FMA/tracks_medium.csv'
     PATH_FAMOUS_LYRICS = './famous artists/csv'
 
     # retrieve_unique_artists(PATH_METADATA)
     # retrieve_artist_trackID(PATH_METADATA)
     # artist_intersection(PATH_MSD, PATH_FMA)
     # merge_famous_artists(PATH_FAMOUS_LYRICS)
-    reconstruct_lyrics()
+    retrieve_artist_lyrics(PATH_FMA_METADATA)
