@@ -70,6 +70,19 @@ def merge_famous_artists(path):
         df['lyric'] = df['lyric'].str.lower().str.strip()
         mainframe = pd.concat([mainframe, df], ignore_index= True)
     mainframe.to_csv('famous_artist_lyrics.csv', index=False)
+
+def create_test_train(path):
+    train = pd.DataFrame(columns=['artist','lyric'])
+    test = pd.DataFrame(columns=['artist','lyric'])
+    df = pd.read_csv(path)
+    unique = df['artist'].unique()
+    for artist in unique:
+        artist_row = df[df['artist'] == artist]
+        train = pd.concat([train, artist_row.head(15)], ignore_index= True)
+        test = pd.concat([test, artist_row.tail(5)])
+
+    train.to_csv('train.csv', index=False)
+    test.to_csv('test.csv', index= False)
             
 if __name__ == "__main__":
     #path variables
@@ -77,10 +90,10 @@ if __name__ == "__main__":
     PATH_FMA = '../FMA/FMA_artists.csv'
     PATH_MSD = './MSD_artists_unique.csv'
     PATH_FMA_METADATA = '../FMA/tracks_medium.csv'
-    PATH_FAMOUS_LYRICS = './famous artists/csv'
+    PATH_FAMOUS_LYRICS = './famous_artist_lyrics.csv'
 
     # retrieve_unique_artists(PATH_METADATA)
     # retrieve_artist_trackID(PATH_METADATA)
     # artist_intersection(PATH_MSD, PATH_FMA)
     # merge_famous_artists(PATH_FAMOUS_LYRICS)
-    retrieve_artist_lyrics(PATH_FMA_METADATA)
+    create_test_train(PATH_FAMOUS_LYRICS)
